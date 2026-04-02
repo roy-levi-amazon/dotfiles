@@ -1,0 +1,36 @@
+# Common
+[push]
+	default = upstream
+	autoSetupRemote = true
+[rerere]
+	enabled = true
+[pull]
+	rebase = true
+# User and default branch name
+[includeIf "gitdir:~/projects/"]
+	path = ~/.gitconfig-work
+[includeIf "gitdir:~/projects/private/"]
+	path = ~/.gitconfig-private
+# Credentials
+[credential "https://github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
+# git-lfs
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+# git-delta
+[core]
+    pager = delta
+	excludesFile = ~/.gitignore_global
+[interactive]
+    diffFilter = delta --color-only
+[delta]
+    navigate = true
+[merge]
+    conflictStyle = zdiff3

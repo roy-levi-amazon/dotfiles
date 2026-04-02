@@ -1,0 +1,170 @@
+{
+  "$schema": "https://lnav.org/schemas/format-v1.schema.json",
+  "ebs_server_log": {
+    "title": "EBS Server Log",
+    "description": "Log format for EBS server with JSON payloads",
+    "regex": {
+      "std": {
+        "pattern": "^\\[(?<timestamp>[^\\]]+)\\]\\[(?<level>\\w+)\\s*\\]\\[(?<thread>[^\\]]+)\\]\\[(?<component>[^\\]]+)\\]\\[\\s*(?<file>[^\\]]+)\\]\\[(?<function>\\w+)\\s*\\]\\[(?<message>[^\\]]+?)\\s*\\]\\[(?<json>\\{.*)\\]$"
+      }
+    },
+    "level-field": "level",
+    "level": {
+      "critical": "CRITICAL",
+      "error": "ERROR",
+      "warning": "WARN",
+      "info": "INFO",
+      "debug": "DEBUG",
+      "trace": "TRACE"
+    },
+    "value": {
+      "thread": {
+        "kind": "string",
+        "identifier": true
+      },
+      "component": {
+        "kind": "string",
+        "identifier": true
+      },
+      "file": {
+        "kind": "string",
+        "identifier": true
+      },
+      "function": {
+        "kind": "string",
+        "identifier": true
+      },
+      "json": {
+        "kind": "json",
+        "hidden": false
+      }
+    },
+    "timestamp-field": "timestamp",
+    "timestamp-format": [
+      "%Y-%m-%dT%H:%M:%S.%fZ"
+    ],
+    "convert-to-local-time": true,
+    "body-field": "message",
+    "opid-field": "thread",
+    "sample": [
+      {
+        "line": "[2025-11-26T12:47:53.560532Z][INFO    ][67fff700][5b1c2274 lsr_6.1.0  ][                   ebs-replication-module.cpp:013677][proactive_drop_peer_updated_state                 ][Successfully updated all secondary's records after blessing                                                                     ][{\"bless_type\":\"SOLO_BLESS\",\"blessing\":\"0\",\"degraded_elapsed_ms\":\"0\",\"dual_elapsed_ms\":\"0\",\"gid\":\"\",\"host\":\"10.0.1.250\",\"is_master\":\"0\",\"is_solo\":\"0\",\"is_tertiary_dropped\":\"0\",\"logical_volume_id\":\"0\",\"membership_bgn\":\"5\",\"nr_max_blessed_peers\":\"2\",\"partition_size_bytes\":\"0\",\"peer0_diverged\":\"0\",\"peer0_diverged_elapsed_ms\":\"0\",\"peer0_ip\":\"10.0.1.139\",\"peer1_diverged\":\"0\",\"peer1_diverged_elapsed_ms\":\"0\",\"peer1_ip\":\"10.0.1.10\",\"physalia_bgn\":\"5\",\"proactive_drop_elapsed_ms\":\"0\",\"proactive_drop_indicator_bitmap\":\"0\",\"proactive_drop_peer_ip\":\"0.0.0.0\",\"proactive_drop_symptom_bitmap\":\"0\",\"solo_elapsed_ms\":\"0\",\"use_physalia_bgn\":\"0\",\"version\":\"0\",\"volume_raid_scheme\":\"invalid-volume-raid-scheme(0)\"}]"
+      }
+    ]
+  },
+  "test_log": {
+    "title": "Test Log",
+    "description": "Test log output with optional host prefix and tab-separated fields",
+    "file-pattern": "test.log",
+    "multiline": true,
+    "regex": {
+      "std": {
+        "pattern": "^(?:\\[(?<host>[^\\]]+)\\]\\s+)?(?:\\[(?<pid>\\d+)\\]\\s+)?(?<timestamp>\\d{4}/\\d{2}/\\d{2}\\s+\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{6})?)\\s+(?<source>[^:]+:\\d+):\\s+\\[(?<level>\\w+)\\]\\s+(?<body>.*?)(?:\\n)?(?<json>\\{[\\s\\S]*?\\})?$"
+      }
+    },
+    "level-field": "level",
+    "level": {
+      "critical": "CRITICAL",
+      "error": "ERROR",
+      "warning": "WARN",
+      "info": "INFO",
+      "debug": "DEBUG",
+      "trace": "TRACE"
+    },
+    "value": {
+      "host": {
+        "kind": "string",
+        "identifier": true,
+        "description": "Host/server identifier"
+      },
+      "pid": {
+        "kind": "integer",
+        "identifier": true,
+        "description": "Process ID"
+      },
+      "source": {
+        "kind": "string",
+        "identifier": true,
+        "description": "Source file and line number"
+      },
+      "json": {
+        "kind": "json",
+        "hidden": false
+      }
+    },
+    "timestamp-field": "timestamp",
+    "timestamp-format": [
+      "%Y/%m/%d %H:%M:%S"
+    ],
+    "body-field": "body",
+    "sample": [
+      {
+        "line": "2025/11/26 14:47:48 3way_test.go:114: [INFO] Blessed secondary is 10.0.1.250/server-0"
+      },
+      {
+        "line": "[10.0.1.139/server-2] 2025/11/26 14:47:48 ssh.go:380: [DEBUG] command \"socat -t 5 - TCP:localhost:5684\" completed: <nil>"
+      },
+      {
+        "line": "[10.0.1.250/server-0] 2025/11/26 14:47:48 injections.go:268: [DEBUG] Uploading injection script to host 10.0.1.250:"
+      }
+    ]
+  },
+  "control_plane_log": {
+    "title": "Control Plane Log",
+    "description": "Control Plane log output with optional host prefix and tab-separated fields",
+    "file-pattern": "control-plane.log",
+    "multiline": true,
+    "regex": {
+      "std": {
+        "pattern": "^(?:\\[(?<host>[^\\]]+)\\]\\s+)?(?:\\[(?<pid>\\d+)\\]\\s+)?(?<timestamp>\\d{4}/\\d{2}/\\d{2}\\s+\\d{2}:\\d{2}:\\d{2}\\.\\d{6})\\s+(?<source>[^:]+:\\d+):\\s+\\[(?<level>\\w+)\\]\\s+(?<body>.*?)(?:\\n)?(?<json>\\{[\\s\\S]*?\\})?$"
+      }
+    },
+    "level-field": "level",
+    "level": {
+      "critical": "CRITICAL",
+      "error": "ERROR",
+      "warning": "WARN",
+      "info": "INFO",
+      "debug": "DEBUG",
+      "trace": "TRACE"
+    },
+    "value": {
+      "host": {
+        "kind": "string",
+        "identifier": true,
+        "description": "Host/server identifier"
+      },
+      "pid": {
+        "kind": "integer",
+        "identifier": true,
+        "description": "Process ID"
+      },
+      "source": {
+        "kind": "string",
+        "identifier": true,
+        "description": "Source file and line number"
+      },
+      "json": {
+        "kind": "json",
+        "hidden": false
+      }
+    },
+    "timestamp-field": "timestamp",
+    "timestamp-format": [
+      "%Y/%m/%d %H:%M:%S.%f"
+    ],
+    "convert-to-local-time": true,
+    "body-field": "body",
+    "sample": [
+      {
+        "line": "2025/11/26 14:47:48.123456 3way_test.go:114: [INFO] Blessed secondary is 10.0.1.250/server-0"
+      },
+      {
+        "line": "[10.0.1.139/server-2] 2025/11/26 14:47:48.123456 ssh.go:380: [DEBUG] command \"socat -t 5 - TCP:localhost:5684\" completed: <nil>"
+      },
+      {
+        "line": "[10.0.1.250/server-0] 2025/11/26 14:47:48.123456 injections.go:268: [DEBUG] Uploading injection script to host 10.0.1.250:"
+      }
+    ]
+  }
+}

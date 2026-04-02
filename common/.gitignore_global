@@ -1,0 +1,24 @@
+build/
+.vscode/
+.history/
+.clangd
+.cache/
+compile_commands.json
+
+# Tests
+aws.yaml
+idm.yaml
+ash-pool.yaml
+lego-pool.yaml
+binary-outlier-traces*
+CramSimulatorSled*
+lithium-external-metrics-v2*
+.canned_log_operation_files/
+latest-test/
+.attach_pid*
+snapshot_tests.spec
+
+# Lpteva
+monitor-turtle-config.json-user-override
+.ruby-lsp.yml
+.solargraph.yml

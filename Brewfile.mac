@@ -1,0 +1,6 @@
+brew "git"
+brew "git-lfs"
+brew "node"
+brew "pipx"
+cask "visual-studio-code"
+cask "raycast"

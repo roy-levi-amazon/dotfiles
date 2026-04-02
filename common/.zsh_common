@@ -1,0 +1,104 @@
+# zmodload zsh/zprof
+
+# Enable Powerlevel10k instant prompt.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# Oh My Zsh
+export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME="powerlevel10k/powerlevel10k"
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting fast-syntax-highlighting)
+source $ZSH/oh-my-zsh.sh
+
+# Tmux
+alias t='tmux'
+alias ta='tmux attach'
+
+# Kiro
+alias kc='kiro-cli chat --trust-all-tools'
+alias kcr='kiro-cli chat --trust-all-tools --resume'
+
+# Clear
+alias cl="clear && printf '\\e[3J'"
+
+# Editor
+export EDITOR="nvim"
+
+# Path
+export PATH="$HOME/.toolbox/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
+
+# Git
+alias gcs='git commit --signoff'
+gch() {
+  local lines=${1:-9}
+  local head_lines=$((lines + 1))
+  git reflog | grep -i "checkout: moving" | head -$head_lines | awk '{print "gc" (NR-1) ": " $NF}' | tail -$lines
+}
+for i in {1..99}; do
+  eval "alias gc$i='git checkout @{-$i}'"
+done
+alias gps='git push share'
+alias glb='git pull backup'
+alias gfb='git fetch backup'
+alias gfs='git fetch share'
+gcos() { git checkout -b "$1" "share/$1"; }
+gcob() { git checkout -b "$1" "backup/$1"; }
+gras() {
+  git remote add $1 ssh://git.amazon.com:2222/pkg/$(git remote get-url origin | sed -n 's|.*/pkg/\([^/]*\).*|\1|p')/share/$1
+}
+alias gpb='git push backup'
+
+
+# Brazil
+alias bb=brazil-build
+alias bba='brazil-build apollo-pkg'
+alias bre='brazil-runtime-exec'
+alias brc='brazil-recursive-cmd-parallel'
+alias bws='brazil ws'
+alias bwsuse='bws use -p'
+alias bwscreate='bws create -n'
+alias bbr='brc brazil-build'
+alias bball='brc --allPackages'
+alias bbb='brc --allPackages brazil-build'
+alias bbra='bbr apollo-pkg'
+alias bc='bb clean'
+alias bbc='bbr clean'
+alias bwsc='bws clean'
+alias bwss='bws sync --md'
+alias bwsss='bws sync'
+alias bwsh='bws show'
+alias bs='$HOME/scripts/brazil-vs-checkout.sh'
+alias bsr='$HOME/scripts/brazil-vs-checkout.sh --rebase-only'
+alias sb='brc $HOME/scripts/smart-brazil-build.sh'
+
+# Commit message
+alias cmi='kiro-cli chat --agent commit-message "Generate a commit message based on the context loaded. Output ONLY the commit message text."'
+cm() {
+  cmi --non-interactive 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' | sed 's/^> //'
+  echo
+}
+sc() {
+  kiro-cli chat --no-interactive --trust-all-tools --model=claude-opus-4.6 "Run 'git log -1 --pretty=%B ' then check my spelling. Tell me either 'SPELL CHECK PASSED', or 'SPELL CHECK FAILED' and explain failure."
+}
+
+# Zoxide
+eval "$(zoxide init zsh --cmd cd)"
+alias cdh='dirs -v'
+
+# Mise
+eval "$(mise activate zsh)" 
+
+# AIM CLI
+export PATH="$HOME/.aim/mcp-servers:$PATH"
+
+# Bun
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# p10k
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# zprof
