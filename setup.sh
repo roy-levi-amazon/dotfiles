@@ -5,8 +5,9 @@ DOTFILES="$(cd "$(dirname "$0")" && pwd)"
 OS="$(uname -s)"
 
 # Install Homebrew if missing
+unset POSIXLY_CORRECT
 if ! command -v brew &>/dev/null; then
-  sh -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   if [[ "$OS" == "Darwin" ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
   else
