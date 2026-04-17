@@ -1,7 +1,7 @@
-source ~/.zsh_common
-
 # Brew (Linux)
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
+
+source ~/.zsh_common
 
 # Linux-specific env
 export BRAZIL_WORKSPACE_DEFAULT_LAYOUT=short
@@ -51,7 +51,7 @@ ssh() { set-title $*; /usr/bin/ssh -2 $*; set-title $HOST; }
 
 # Seatbelt / Brazil scripts
 alias seatbelt=/apollo/env/EC2SeatbeltCLI/bin/seatbelt.rb
-alias mw='/home/roylevi/scripts/mwinit.sh'
+alias mw='/home/roylevi/scripts/mw.sh'
 
 # Notification system
 _send_notification() {
@@ -108,7 +108,7 @@ et() {
         esac
     done
 
-    ./ebs-test run --slack-interval 5m $s3_flag --logs ./latest-test --config /home/roylevi/.config/ebs_test.json $force_artifacts "${args[@]}"
+    ./ebs-test run --slack-interval 5m $s3_flag --logs ./latest-test --config $HOME/.config/ebs_test.json $force_artifacts "${args[@]}"
 }
 alias etf='et -nf --force-aws --parallel 250'
 alias eta='et --aws-auto aws.yaml'
@@ -118,10 +118,12 @@ alias etpa='et --hardware-platform ash --ash-setup ash-pool.yaml'
 alias etplc='./ebs-test lego-create -o lego-pool.yaml'
 alias etpl='et --hardware-platform lego --lego-setup lego-pool.yaml'
 alias eth='./ebs-test --help'
-alias etc='./ebs-test cleanup'
-alias etl='./ebs-test list'
+alias etc='./ebs-test cleanup --config $HOME/.config/ebs_test.json'
+alias etl='./ebs-test list --config $HOME/.config/ebs_test.json'
 alias etd='./ebs-test download-test-artifacts --dest ./latest-test'
 alias fb='./fast_build.sh'
+alias cde='cd ../EbsServer'
+alias cdt='cd ../EbsServerTest'
 
 # lnav for EbsServerTest results
 etlogf() {

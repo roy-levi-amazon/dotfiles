@@ -73,6 +73,23 @@ bmds_package_info() {
     echo "$xml" | grep -oP '<branchCLN>\K[^<]+'  || true
 }
 
+# Regenerate the bare VS file and .json from .pristine using Brazil's own parser.
+# This is what `brazil ws sync --metadata` does internally (~90ms).
+regen_vs_from_pristine() {
+    local pristine="$1" bare="$2" json="$3"
+    local ruby
+    ruby=$(ls ~/.toolbox/tools/brazilcli/*/bin/ruby 2>/dev/null | sort -V | tail -1)
+    [[ -z "$ruby" ]] && return 1
+    "$ruby" -e '
+require "amazon/brazil/package_config"
+require "json"
+data = Amazon::Brazil::PackageConfig.parse(File.read(ARGV[0]), :basic)
+File.write(ARGV[1], Amazon::Brazil::PackageConfig.dump(data))
+vs_key = data.keys.find { |k| k.start_with?("versionSet.") }
+File.write(ARGV[2], JSON.fast_generate(data[vs_key]))
+' "$pristine" "$bare" "$json" 2>/dev/null
+}
+
 # Update release-info VS files via direct BMDS curl (replaces brazil ws use --vs).
 # ~1.2s vs ~5s for the brazil CLI equivalent.
 update_vs_files_curl() {
@@ -98,8 +115,13 @@ update_vs_files_curl() {
     local pid_g=$!
     wait "$pid_p" "$pid_g" 2>/dev/null || true
 
-    [[ -s "$tmp_p" ]] && mv "$tmp_p" "$ri_dir/$vs_name.pristine" || rm -f "$tmp_p"
-    [[ -s "$tmp_g" ]] && mv "$tmp_g" "$ri_dir/$vs_name.graph"    || rm -f "$tmp_g"
+    if [[ -s "$tmp_p" ]]; then
+        mv "$tmp_p" "$ri_dir/$vs_name.pristine"
+        regen_vs_from_pristine "$ri_dir/$vs_name.pristine" "$ri_dir/$vs_name" "$ri_dir/$vs_name.json"
+    else
+        rm -f "$tmp_p"
+    fi
+    [[ -s "$tmp_g" ]] && mv "$tmp_g" "$ri_dir/$vs_name.graph" || rm -f "$tmp_g"
 }
 
 # Checkout a package to a specific branch and commit.
