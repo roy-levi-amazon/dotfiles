@@ -287,9 +287,9 @@ names=()
 
 for pkg_dir in "$WS_ROOT"/src/*/; do
     pkg_name=$(basename "$pkg_dir")
-    [[ ! -d "$pkg_dir/.git" ]] && continue
+    [[ ! -e "$pkg_dir/.git" ]] && continue
 
-    mv=$(grep -oP "${pkg_name}-\K[^\s=;]+" "$WS_ROOT/packageInfo" 2>/dev/null | head -1)
+    mv=$(grep -zoP 'packages\s*=\s*\{[^}]*' "$WS_ROOT/packageInfo" 2>/dev/null | grep -oP "${pkg_name}-\K[^\s=;]+" | head -1)
     [[ -z "$mv" ]] && { echo "  ·  $pkg_name  (not in packageInfo)"; continue; }
 
     echo "  …  $pkg_name-$mv"
