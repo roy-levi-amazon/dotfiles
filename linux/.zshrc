@@ -122,8 +122,6 @@ alias etc='./ebs-test cleanup --config $HOME/.config/ebs_test.json'
 alias etl='./ebs-test list --config $HOME/.config/ebs_test.json'
 alias etd='./ebs-test download-test-artifacts --dest ./latest-test'
 alias fb='./fast_build.sh'
-alias cde='cd ../EbsServer'
-alias cdt='cd ../EbsServerTest'
 
 # lnav for EbsServerTest results
 etlogf() {

@@ -72,6 +72,9 @@ alias bwsh='bws show'
 alias bs='$HOME/scripts/brazil-vs-checkout.sh'
 alias bsr='$HOME/scripts/brazil-vs-checkout.sh --rebase-only'
 alias sb='brc $HOME/scripts/smart-brazil-build.sh'
+alias cde='cd ../EbsServer'
+alias cda='cd ../EbsServerAsyncFramework'
+alias cdt='cd ../EbsServerTest'
 
 # Commit message
 alias cmi='kiro-cli chat --agent commit-message "Generate a commit message based on the context loaded. Output ONLY the commit message text."'
