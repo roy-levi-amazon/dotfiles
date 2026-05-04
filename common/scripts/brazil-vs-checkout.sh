@@ -57,9 +57,14 @@ local_event_id() {
 
 # Fetch the latest event ID for a version set from BMDS.
 bmds_latest_event_id() {
-    curl -s -L -b ~/.midway/cookie \
-        "$BMDS/?Action=getVersionSetRevisionEventIds&versionSetName=$1&maxResults=1" \
-        | grep -oP '<member>\K[0-9]+' || true
+    local response
+    response=$(curl -s -L -b ~/.midway/cookie \
+        "$BMDS/?Action=getVersionSetRevisionEventIds&versionSetName=$1&maxResults=1")
+    if echo "$response" | grep -qi 'midway\|sign.in\|<html'; then
+        echo "ERROR: Midway cookie is expired. Run 'mwinit' to refresh." >&2
+        exit 1
+    fi
+    echo "$response" | grep -oP '<member>\K[0-9]+' || true
 }
 
 # Fetch branch name and commit for a package from BMDS.
@@ -69,6 +74,10 @@ bmds_package_info() {
     local xml
     xml=$(curl -s -L -b ~/.midway/cookie \
         "$BMDS/?Action=getPackageVersionByVersionSet&packageName=${pkg}&majorVersion=${mv}&versionSet=${vs}${eid:+&eventId=${eid}}" 2>/dev/null) || true
+    if echo "$xml" | grep -qi 'midway\|sign.in\|<html'; then
+        echo "ERROR: Midway cookie is expired. Run 'mwinit' to refresh." >&2
+        exit 1
+    fi
     echo "$xml" | grep -oP '<branchName>\K[^<]+' || true
     echo "$xml" | grep -oP '<branchCLN>\K[^<]+'  || true
 }
@@ -235,6 +244,12 @@ export REBASE_ONLY
 # ─────────────────────────────────────────────────────────────────────────────
 # Resolve workspace, version set, and event ID
 # ─────────────────────────────────────────────────────────────────────────────
+
+# Validate Midway cookie exists
+if [[ ! -f ~/.midway/cookie ]]; then
+    echo "ERROR: Midway cookie not found. Run 'mwinit' to refresh." >&2
+    exit 1
+fi
 
 WS_ROOT=$(find_workspace_root) || { echo "ERROR: Not inside a Brazil workspace." >&2; exit 1; }
 
